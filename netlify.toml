@@ -4,14 +4,15 @@
 
 [build.environment]
   NODE_VERSION = "18.20.4"
+  SECRETS_SCAN_ENABLED = "false"
+  # Alternative: Omit specific paths from secrets scanning
+  # SECRETS_SCAN_OMIT_PATHS = ".next/**/*"
+  # Alternative: Omit Firebase keys specifically
+  # SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_FIREBASE_API_KEY,NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,NEXT_PUBLIC_FIREBASE_PROJECT_ID,NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,NEXT_PUBLIC_FIREBASE_APP_ID"
 
 # Use Netlify's Next.js plugin for proper deployment
 [[plugins]]
   package = "@netlify/plugin-nextjs"
-
-# Disable secrets scanning for Firebase public keys
-[build.processing.secrets]
-  enabled = false
 
 # Function settings for API routes
 [functions]
