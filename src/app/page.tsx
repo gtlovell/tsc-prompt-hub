@@ -470,6 +470,7 @@ export default function Home() {
           onUpdate={handleUpdateFolder}
           onDelete={handleDeleteFolder}
           allFolders={folders}
+          userId={user.uid}
         />
       )}
       {isFeedbackModalOpen && (

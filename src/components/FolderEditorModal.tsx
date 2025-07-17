@@ -10,6 +10,7 @@ interface FolderEditorModalProps {
   onDelete: (folderId: string) => void;
   folder: Folder | null;
   allFolders: Folder[];
+  userId: string;
 }
 
 const FolderEditorModal: React.FC<FolderEditorModalProps> = ({
@@ -20,6 +21,7 @@ const FolderEditorModal: React.FC<FolderEditorModalProps> = ({
   onDelete,
   folder,
   allFolders,
+  userId,
 }) => {
   const [name, setName] = useState("");
   const [parentFolderId, setParentFolderId] = useState<string | null>(null);
@@ -38,7 +40,7 @@ const FolderEditorModal: React.FC<FolderEditorModalProps> = ({
     if (folder && folder.id) {
       onUpdate({ ...folder, name, parent_folder_id: parentFolderId });
     } else {
-      onSave({ name, parent_folder_id: parentFolderId });
+      onSave({ name, parent_folder_id: parentFolderId, userId });
     }
   };
 
