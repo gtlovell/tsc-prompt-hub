@@ -8,6 +8,7 @@ interface ProjectEditorModalProps {
   onSave: (project: Omit<Project, "id">) => void;
   onDelete?: (projectId: string) => void;
   project?: Project | null;
+  userId: string;
 }
 
 const colors = [
@@ -28,6 +29,7 @@ const ProjectEditorModal: React.FC<ProjectEditorModalProps> = ({
   onSave,
   onDelete,
   project,
+  userId,
 }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -46,7 +48,7 @@ const ProjectEditorModal: React.FC<ProjectEditorModalProps> = ({
   }, [project, isOpen]);
 
   const handleSave = () => {
-    onSave({ name, description, color });
+    onSave({ name, description, color, userId });
     onClose();
   };
 

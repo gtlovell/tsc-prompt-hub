@@ -89,12 +89,10 @@ export const getProjects = async (userId: string): Promise<Project[]> => {
 };
 
 export const createProject = async (
-  project: Omit<Project, "id">,
-  userId: string
+  project: Omit<Project, "id">
 ): Promise<Project> => {
-  const newProject = { ...project, userId };
-  const docRef = await addDoc(collection(db, "projects"), newProject);
-  return { ...newProject, id: docRef.id };
+  const docRef = await addDoc(collection(db, "projects"), project);
+  return { ...project, id: docRef.id };
 };
 
 export const deleteProject = async (projectId: string): Promise<void> => {
@@ -156,10 +154,9 @@ export const getFoldersByProject = async (
 };
 
 export const createFolder = async (
-  folder: Omit<Folder, "id" | "is_favorite">,
-  userId: string
+  folder: Omit<Folder, "id" | "is_favorite">
 ): Promise<Folder> => {
-  const newFolder = { ...folder, is_favorite: false, userId };
+  const newFolder = { ...folder, is_favorite: false };
   try {
     const docRef = await addDoc(collection(db, "folders"), newFolder);
     return { ...newFolder, id: docRef.id };

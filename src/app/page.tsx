@@ -219,7 +219,7 @@ export default function Home() {
   const handleSaveProject = async (project: Omit<Project, "id">) => {
     if (!user) return;
     try {
-      const newProject = await createProject(project, user.uid);
+      const newProject = await createProject(project);
       setProjects([...projects, newProject]);
       setSelectedProjectId(newProject.id);
       handleCloseModal();
@@ -298,13 +298,12 @@ export default function Home() {
   ) => {
     if (!user || !selectedProjectId) return;
     try {
-      const newFolder = await createFolder(
-        {
-          ...folder,
-          project_id: selectedProjectId,
-        },
-        user.uid
-      );
+      const newFolderData = {
+        ...folder,
+        project_id: selectedProjectId,
+        userId: user.uid,
+      };
+      const newFolder = await createFolder(newFolderData);
       setFolders([...folders, newFolder]);
       handleCloseModal();
     } catch (error) {
@@ -459,6 +458,7 @@ export default function Home() {
           onClose={handleCloseModal}
           onSave={handleSaveProject}
           onDelete={handleDeleteProject}
+          userId={user.uid}
         />
       )}
       {editingFolder && (
