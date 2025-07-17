@@ -55,7 +55,10 @@ export default function Home() {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthChange(setUser);
+    const unsubscribe = onAuthChange((user) => {
+      setUser(user);
+      setLoading(false);
+    });
     return () => unsubscribe();
   }, []);
 
@@ -70,13 +73,11 @@ export default function Home() {
   useEffect(() => {
     const fetchProjects = async () => {
       if (!user) return;
-      setLoading(true);
       const projectsData = await getProjects(user.uid);
       setProjects(projectsData);
       if (projectsData.length > 0) {
         setSelectedProjectId(projectsData[0].id);
       }
-      setLoading(false);
     };
     fetchProjects();
   }, [user]);
@@ -101,10 +102,8 @@ export default function Home() {
   useEffect(() => {
     const fetchPrompts = async () => {
       if (!user) return;
-      setLoading(true);
       const promptsData = await getAllPrompts(user.uid);
       setPrompts(promptsData);
-      setLoading(false);
     };
     fetchPrompts();
   }, [user]);
@@ -382,6 +381,14 @@ export default function Home() {
       throw error;
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-zinc-900">
+        <p className="text-white">Loading...</p>
+      </div>
+    );
+  }
 
   if (!user) {
     return <Login />;
