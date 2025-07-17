@@ -3,7 +3,6 @@
   publish = ".next"
 
 [build.environment]
-  NODE_VERSION = "20"
 
 [build.processing]
   [build.processing.secrets]
