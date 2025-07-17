@@ -22,11 +22,37 @@ This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-opti
 
 ## Environment Variables
 
-To run this project, you will need to add the following environment variable to a `.env.local` file:
+To run this project, you will need to add the following environment variables to a `.env.local` file:
 
-`API_KEY`
+### Firebase Configuration (Public - safe to expose in client-side code)
 
-This is your Google Gemini API key.
+```
+NEXT_PUBLIC_FIREBASE_API_KEY=your_firebase_api_key_here
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=123456789
+NEXT_PUBLIC_FIREBASE_APP_ID=1:123456789:web:abcdef123456
+```
+
+### Private API Keys (Keep these secret)
+
+```
+GEMINI_API_KEY=your_gemini_api_key_here
+RESEND_API_KEY=your_resend_api_key_here
+```
+
+**Note:** Firebase configuration values (NEXT*PUBLIC*\*) are public and safe to expose in client-side code. The API keys for Gemini and Resend should be kept private.
+
+## Deployment
+
+This project is configured for deployment on Netlify with the following features:
+
+- Automatic builds from your Git repository
+- Netlify Functions for API routes
+- Environment variable management through Netlify's dashboard
+
+Make sure to set all the environment variables in your Netlify site settings before deploying.
 
 ## Learn More
 

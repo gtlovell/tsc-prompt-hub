@@ -3,9 +3,24 @@
   publish = ".next"
 
 [build.environment]
+  NODE_VERSION = "18.20.4"
 
-[build.processing]
-  [build.processing.secrets]
-    enabled = false
-    omit_keys = ["RESEND_API_KEY", "GEMINI_API_KEY", "NEXT_PUBLIC_FIREBASE_API_KEY", "NEXT_PUBLIC_FIREBASE_APP_ID", "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN", "NEXT_PUBLIC_FIREBASE_PROJECT_ID", "NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET", "NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID"]
-    omit_paths = [".next/**", ".netlify/**"]
+# Use Netlify's Next.js plugin for proper deployment
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Disable secrets scanning for Firebase public keys
+[build.processing.secrets]
+  enabled = false
+
+# Function settings for API routes
+[functions]
+  external_node_modules = ["firebase", "@google/generative-ai", "resend"]
+
+# Headers for security
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
