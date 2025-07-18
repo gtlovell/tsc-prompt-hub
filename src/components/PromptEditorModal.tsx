@@ -39,6 +39,8 @@ const PromptEditorModal: React.FC<PromptEditorModalProps> = ({
   );
   const [newTagName, setNewTagName] = useState("");
   const [localTags, setLocalTags] = useState<TagType[]>(allTags);
+  const [analysis, setAnalysis] = useState<string | null>(null);
+  const [isLoadingAnalysis, setIsLoadingAnalysis] = useState(false);
 
   useEffect(() => {
     if (prompt) {
@@ -108,6 +110,46 @@ const PromptEditorModal: React.FC<PromptEditorModalProps> = ({
       });
     } else {
       setCurrentVersion({ ...currentVersion, [name]: value });
+    }
+  };
+
+  const handleAnalysis = async () => {
+    if (!currentVersion?.content) return;
+    setIsLoadingAnalysis(true);
+    setAnalysis(null);
+    try {
+      const response = await fetch("/api/analyze-prompt", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: currentVersion.content }),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setAnalysis(data.analysis);
+      } else {
+        setAnalysis("Error analyzing prompt.");
+      }
+    } catch (err) {
+      if (err instanceof Error) {
+        setAnalysis(`Error analyzing prompt: ${err.message}`);
+      } else {
+        setAnalysis("An unknown error occurred while analyzing the prompt.");
+      }
+    } finally {
+      setIsLoadingAnalysis(false);
+    }
+  };
+
+  const handleAcceptSuggestion = () => {
+    if (!analysis || !currentVersion) return;
+
+    const enhancedPrompt = analysis.split("Enhanced Prompt:")[1];
+    if (enhancedPrompt) {
+      setCurrentVersion({
+        ...currentVersion,
+        content: enhancedPrompt.trim(),
+      });
+      setAnalysis(null);
     }
   };
 
@@ -200,13 +242,27 @@ const PromptEditorModal: React.FC<PromptEditorModalProps> = ({
               name="content"
               value={currentVersion.content}
               onChange={handleContentChange}
-              placeholder="Enter your prompt here..."
-              className="w-full flex-1 bg-black border border-zinc-700 rounded-lg p-3 text-base text-zinc-300 font-mono leading-relaxed resize-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+              placeholder="Prompt content..."
+              className="w-full bg-black border border-zinc-700 rounded-lg p-3 text-white flex-1 resize-none h-64 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
             />
+            {analysis && (
+              <div className="bg-zinc-800 p-4 rounded-lg">
+                <h3 className="text-lg font-semibold text-white mb-2">
+                  Analysis
+                </h3>
+                <p className="text-zinc-300 whitespace-pre-wrap">{analysis}</p>
+                <button
+                  onClick={handleAcceptSuggestion}
+                  className="mt-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                >
+                  Accept Suggestion
+                </button>
+              </div>
+            )}
           </main>
 
-          {/* Settings Sidebar */}
-          <aside className="w-full md:w-80 rounded-xl border-zinc-700 p-6 flex flex-col gap-6 overflow-y-auto bg-black md:mr-4">
+          {/* Sidebar */}
+          <aside className="w-full md:w-80 bg-zinc-900/50 border-l border-zinc-800 p-6 flex flex-col gap-6 overflow-y-auto">
             <div>
               <h3 className="text-sm font-semibold text-zinc-400 mb-2">
                 Model Settings
@@ -305,6 +361,22 @@ const PromptEditorModal: React.FC<PromptEditorModalProps> = ({
                   </button>
                 </div>
               </div>
+            </div>
+            <div className="flex justify-end gap-2 mt-auto">
+              <button
+                onClick={handleAnalysis}
+                disabled={isLoadingAnalysis}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-blue-800"
+              >
+                {isLoadingAnalysis ? "Analyzing..." : "Analyze"}
+              </button>
+
+              <button
+                onClick={handleSave}
+                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+              >
+                Save
+              </button>
             </div>
           </aside>
         </div>
